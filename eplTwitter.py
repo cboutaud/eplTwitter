@@ -2,6 +2,7 @@ import json
 import base64
 import urllib
 import urllib2
+import time
 
 def chunks(data_list, size):
 
@@ -41,7 +42,7 @@ access_token = json_data["access_token"]
 # FIRST ACCOUNT TO CHECK
 url = "https://api.twitter.com/1.1/followers/ids.json"
 params = {
-    "screen_name": "Arsenal"
+    "screen_name": "ManUtd"
 }
 data = urllib.urlencode(params)
 url = url + "?" + data
@@ -64,7 +65,7 @@ except urllib2.HTTPError, e:
 raw_data = response.read()
 json_data = json.loads(raw_data)
 
-arsenal_followers = json_data["ids"]
+club_followers = json_data["ids"]
 
 
 
@@ -99,26 +100,29 @@ json_data = json.loads(raw_data)
 
 n = json_data["next_cursor"]
 while n is not 0:
-	sleep(15)
 	cursor_url = url_path + "&cursor=" + str(n)
 	request = urllib2.Request(cursor_url, headers=headers)
 	try: 
 	    response = urllib2.urlopen(request)
 	except urllib2.HTTPError, e:
-	    print e
-	    print(e.message)
-	    print(e.info())
+		time.sleep(60 * 15)
+		print e
+		print(e.message)
+		print(e.info())
+		continue
+	except StopIteration:
+	        break
 	raw_data = response.read()
 	json_data = json.loads(raw_data)
 	n = json_data["next_cursor"]
 
 
-labour_followers = json_data["ids"]
+polpar_followers = json_data["ids"]
 
-print("lenght : " + str(len(arsenal_followers)))
-print("lenght : " + str(len(labour_followers)))
+print("lenght : " + str(len(club_followers)))
+print("lenght : " + str(len(polpar_followers)))
 
-common_followers = set(arsenal_followers) & set(labour_followers)
+common_followers = set(club_followers) & set(polpar_followers)
 
 
 
